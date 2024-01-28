@@ -19,3 +19,34 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+ <activity
+        android:name="com.hyperwallet.android.ui.transfermethod.view.AddTransferMethodActivity"
+        android:theme="@style/Theme.MaterialComponents.NoActionBar.Bridge"
+        tools:replace="android:theme" />@Override
+protected void onDestroy() {
+    super.onDestroy();
+    ...
+    // unregister receiver
+    LocalBroadcastManager.getInstance(this).unregisterReceiver(mBroadcastReceiver);
+} // create receiver
+private final BroadcastReceiver mBroadcastReceiver = new BroadcastReceiver() {
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        ...
+    }
+};@Override
+protected void onCreate(Bundle savedInstanceState) {
+    ...
+
+    // register receiver
+    IntentFilter filter = new IntentFilter();
+    filter.addAction(TransferMethodLocalBroadcast.TransferMethodLocalBroadcastAction.ACTION_HYPERWALLET_TRANSFER_METHOD_ADDED);
+    filter.addAction(TransferMethodLocalBroadcast.TransferMethodLocalBroadcastAction.ACTION_HYPERWALLET_TRANSFER_METHOD_DEACTIVATED);
+    filter.addAction(TransferLocalBroadcast.TransferLocalBroadcastAction.ACTION_HYPERWALLET_TRANSFER_SCHEDULED);
+    filter.addAction(HyperwalletIntent.AUTHENTICATION_ERROR_ACTION);
+    
+    LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(mBroadcastReceiver, filter);
+}public void onClick(View view) {
+    Intent intent = mHyperwalletReceiptUi.getIntentListReceiptActivity(MainActivity.this, false);
+    startActivity(intent);
+}
